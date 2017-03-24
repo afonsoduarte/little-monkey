@@ -1,0 +1,70 @@
+<!--
+ Copyright 2016 Google Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html> 
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="canonical" href="https://little-monkey.firebaseapp.com/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Little Monkey</title> 
+  <link rel="stylesheet" type="text/css" href="styles/main.css"> 
+ 
+  <link rel="apple-touch-icon" sizes="57x57" href="images/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="images/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="images/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="images/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="images/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="images/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="images/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="images/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Little Monkey">
+  
+  <link rel="manifest" href="/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="images/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+
+  <header class="header">
+    <h1 class="header__title">Little Monkey</h1>
+    <nav>
+      <ul>
+        <li><button class="particle-toggle">Particles</button></li>
+        <li><button class="bubble-toggle">Bubble</button></li>
+        <li><button class="paint-brush-toggle">Paint</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main">
+    <canvas id="paper" resize style="width:100vw;height:100vh;"></canvas>
+  </main>
+
+  <!-- Uncomment the line below when ready to test with fake data -->
+  <script src="scripts/bundle.js" async></script>
+</body>
+</html>
