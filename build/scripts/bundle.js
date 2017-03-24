@@ -60,14 +60,33 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/scripts/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var Utils = {
+  random: function (min, max) {
+    if(!max) max = min; min = 0;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  },
+  randomFromArray: function (arr) {
+    return arr[ this.random(arr.length) ];
+  }
+} 
+
+/* harmony default export */ __webpack_exports__["a"] = Utils;
+
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -104,7 +123,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 var paper = function(self, undefined) {
 
-self = self || __webpack_require__(2);
+self = self || __webpack_require__(6);
 
 var window = self.window,
 	document = self.document;
@@ -15088,7 +15107,7 @@ paper = new (PaperScope.inject(Base.exports, {
 }))();
 
 if (paper.agent.node)
-	__webpack_require__(1)(paper);
+	__webpack_require__(5)(paper);
 
 if (true) {
 	!(__WEBPACK_AMD_DEFINE_FACTORY__ = (paper),
@@ -15105,44 +15124,248 @@ return paper;
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-/* (ignored) */
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_paper__);
+
+
+
+window.paintBrushTool = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Tool();
+window.paintBrushTool.minDistance = 10;
+window.paintBrushTool.maxDistance = 45;
+
+var paintBrushPath;
+
+var PaintBrush = function() {
+  this.init();
+}
+
+PaintBrush.prototype = {
+  init: function () {
+    this.registerEventHandlers();
+  },
+
+  registerEventHandlers: function () {
+    window.paintBrushTool.onMouseDown = this.mouseDownHandler;
+    window.paintBrushTool.onMouseDrag = this.mouseDragHandler;
+    window.paintBrushTool.onMouseUp = this.mouseUpHandler;
+    window.paintBrushTool.activate();
+  },
+
+  mouseDownHandler: function (e) {
+    paintBrushPath = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Path();
+    paintBrushPath.fillColor = {
+      hue: Math.random() * 360,
+      saturation: 1,
+      brightness: 1
+    };
+
+    paintBrushPath.add(e.point);
+  },
+
+  mouseDragHandler: function (e) {
+    var step = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Point(e.delta.x / 2, e.delta.y / 2);
+    step.angle += 90;
+
+    var top = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Point(e.middlePoint.x + step.x, e.middlePoint.y + step.y);
+    var bottom = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Point(e.middlePoint.x - step.x, e.middlePoint.y - step.y);
+    
+    paintBrushPath.add(top);
+    paintBrushPath.insert(0, bottom);
+    paintBrushPath.smooth();
+  },
+
+  mouseUpHandler: function (e) {
+    paintBrushPath.add(e.point);
+    paintBrushPath.closed = true;
+    paintBrushPath.smooth();
+  }
+};
+
+document.querySelector(".paint-brush-toggle").addEventListener('click', function() {
+  __WEBPACK_IMPORTED_MODULE_1_paper___default.a.project.clear();
+  window.paintBrush = new PaintBrush();
+}, false);
+
 
 /***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_paper__);
+
+
+
+// Create an empty project and a view for the canvas:
+__WEBPACK_IMPORTED_MODULE_1_paper___default.a.setup( 'paper' );
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_paper___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_paper__);
+
+
+
+window.particleExplosionTool = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Tool();
+
+var MAX_PARTICLES = 280;
+var COLOURS = [ '#69D2E7', '#A7DBD8', '#E0E4CC', '#F38630', '#FA6900', '#FF4E50', '#F9D423' ];
+var particles = [];
+var pool = [];
+
+var Particle = function(x, y, radius) {
+  this.init( x, y, radius );
+}
+
+Particle.prototype = {
+  init: function( x, y, radius ) {
+    this.alive = true;
+    this.radius = radius || 10;
+    this.wander = 0.15;
+    this.theta = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random(Math.PI * 2);
+    this.drag = 0.92;
+    this.color = '#fff';
+    this.x = x || 0.0;
+    this.y = y || 0.0;
+    this.vx = 0.0;
+    this.vy = 0.0;
+  },
+  move: function() {
+    this.x += this.vx;
+    this.y += this.vy;
+
+    this.vx *= this.drag;
+    this.vy *= this.drag;
+
+    this.theta += __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( -0.5, 0.5 ) * this.wander;
+    this.vx += Math.sin( this.theta ) * 0.1;
+    this.vy += Math.cos( this.theta ) * 0.1;
+
+    this.radius *= 0.9;
+    this.alive = this.radius > 0.5;
+
+    this.circle.translate(new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Point(this.vx, this.vy));
+    this.circle.scale( 0.9 );
+  },
+  draw: function() {
+    this.circle = new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Path.Circle({
+      center:  new __WEBPACK_IMPORTED_MODULE_1_paper___default.a.Point(this.x, this.y),
+      radius: this.radius,
+      fillColor: this.color
+    });
+  },
+  hide: function () {
+    this.circle.fillColor = '#fff';
+  }
+};
+
+var ParticleExplosion = function() {
+  this.init();
+}
+
+ParticleExplosion.prototype = {
+  init: function () {
+    this.registerEventHandlers();
+  },
+
+  registerEventHandlers: function () {
+    __WEBPACK_IMPORTED_MODULE_1_paper___default.a.view.onFrame = this.renderParticles;
+    window.particleExplosionTool.onMouseDrag = this.mouseDragHandler;
+    window.particleExplosionTool.activate();
+  },
+
+  renderParticles: function () {
+    var thisParticle;
+    for ( var i = particles.length - 1; i >= 0; i-- ) {
+      thisParticle = particles[i];
+      if ( thisParticle.alive ) {
+        thisParticle.move();
+      }
+      else {
+        thisParticle.hide();
+        pool.push( particles.splice( i, 1 )[0] );
+      }
+    }
+  },
+
+  mouseDragHandler: function (e) {
+    window.particleExplosion.spawnParticles( e.event.pageX, e.event.pageY );
+  },
+
+  spawnParticles: function (x, y) {
+    var particle, theta, force;
+
+    if ( particles.length >= MAX_PARTICLES )
+        pool.push( particles.shift() );
+
+    particle = pool.length ? pool.pop() : new Particle();
+    particle.init( x, y, __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( 5, 40 ) );
+
+    particle.wander = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( 0.5, 2.0 );
+    particle.color = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].randomFromArray( COLOURS );
+    particle.drag = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( 0.9, 0.99 );
+
+    theta = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( Math.PI * 2 );
+    force = __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* default */].random( 2, 8 );
+
+    particle.vx = Math.sin( theta ) * force;
+    particle.vy = Math.cos( theta ) * force;
+
+    particle.draw();
+
+    particles.push( particle );
+  }
+};
+
+document.querySelector(".particle-toggle").addEventListener('click', function() {
+  __WEBPACK_IMPORTED_MODULE_1_paper___default.a.project.clear();
+  window.particleExplosion = new ParticleExplosion();
+}, false);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_paper__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_paper___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_paper__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__modules_paper_setup__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__modules_particle_explosion__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_paint_brush__ = __webpack_require__(2);
 
 
-  // Get a reference to the canvas object
-  var canvas = document.getElementById('paper');
-  // Create an empty project and a view for the canvas:
-  __WEBPACK_IMPORTED_MODULE_0_paper___default.a.setup(canvas);
-  // Create a Paper.js Path to draw a line into it: 
-  var path = new __WEBPACK_IMPORTED_MODULE_0_paper___default.a.Path();
-  // Give the stroke a color
-  path.strokeColor = 'black';
-  var start = new __WEBPACK_IMPORTED_MODULE_0_paper___default.a.Point(18, 100);
-  // Move to start and draw a line from there
-  path.moveTo(start);
-  // Note that the plus operator on Point objects does not work
-  // in JavaScript. Instead, we need to call the add() function:
-  path.lineTo(start.add([ 200, -50 ]));
-  // Draw the view now:
-  __WEBPACK_IMPORTED_MODULE_0_paper___default.a.view.draw();
+// import bubble from './modules/_bubble';
 
+
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('./service-worker.js')
+    .then(function() { console.log('Service Worker Registered'); });
+}
 
 /***/ })
 /******/ ]);
